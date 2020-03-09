@@ -1,0 +1,10 @@
+.tag {
+  background: white;
+}
+
+.tag select {
+  padding: 0.5vh;
+  font-size: 1em;
+  width: 13vw;
+  border-radius: 2px;
+}

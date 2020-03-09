@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Maps</title>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+   integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+   crossorigin=""/>
+   <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+   integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+   crossorigin=""></script>
+</head>
+<body>
+	<div id="mapid"></div>
+	<style type="text/css">
+		#mapid { height: 500px; width: 500px;}
+		.info {
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+.info h4 {
+    margin: 0 0 5px;
+    color: #777;
+}
+	</style>
+	<script type="text/javascript" src="india_district.js"></script>
+	<script type="text/javascript">
+		function getColor(d) {
+			if (d == 'Uttar Pradesh'){
+				return '#FFEDA0';
+			}
+
+    
+}
+		var mymap = L.map('mapid').setView([22.2175157,81.1050093], 5);
+		L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoic2luZ2hzb3VyYWJoMTQiLCJhIjoiY2pzYXV2bGg5MDNtcjQzbXB2eWYzeTQydSJ9.25NlWN1S4P4JO1wdBw0WAg', {
+    maxZoom: 18,
+    id: 'mapbox.light',
+    accessToken: 'your.mapbox.access.token'
+	}).addTo(mymap);
+
+	function style(feature) {
+    return {
+        fillColor: getColor(feature.properties.NAME_1),
+        weight: 1,
+        opacity: 1,
+        color: 'white',
+        dashArray: '3',
+        fillOpacity: 0.7
+    };
+}
+	
+		var info = L.control();
+
+	info.onAdd = function (map) {
+	    this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+	    this.update();
+	    return this._div;
+	};
+
+	// method that we will use to update the control based on feature properties passed
+	info.update = function (props) {
+	    this._div.innerHTML = '<h4>Indian Provinces</h4>' +  (props ?
+	        '<b>' + props.NAME_2 + '</b><br />'
+	        : 'Hover over a state');
+	};
+
+info.addTo(mymap);
+
+	function highlightFeature(e) {
+		var layer = e.target;
+
+		layer.setStyle({
+			weight: 5,
+			color: '#666',
+			dashArray: '',
+			fillOpacity: 0.7
+		});
+
+		if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+			layer.bringToFront();
+		}
+
+		info.update(layer.feature.properties);
+	}
+
+	function resetHighlight(e) {
+		geojson.resetStyle(e.target);
+		info.update();
+	}
+
+	function zoomToFeature(e) {
+		map.fitBounds(e.target.getBounds());
+	}
+
+	function onEachFeature(feature, layer) {
+		layer.on({
+			mouseover: highlightFeature,
+			mouseout: resetHighlight,
+			click: zoomToFeature
+		});
+	}
+	geojson = L.geoJson(districts, {style:style, onEachFeature: onEachFeature}).addTo(mymap);
+	</script>
+</body>
+</html>

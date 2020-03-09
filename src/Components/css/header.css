@@ -1,0 +1,15 @@
+.Box {
+  background: white;
+  display: flex;
+  font-family: "Roboto Condensed", sans-serif;
+  font-size: 2em;
+  color: #368be0;
+}
+
+.logo {
+  height: 20vh;
+  width: 30vw;
+  margin: 1vh 4vw 0vh 2vw;
+  background-repeat: no-repeat;
+  background: url("logo.png");
+}
